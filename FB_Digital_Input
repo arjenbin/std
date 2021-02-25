@@ -1,0 +1,45 @@
+FUNCTION_BLOCK "FB_Digital_Input"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      DI_Input : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      DI : "UDT_Digital_In";
+   END_VAR
+
+   VAR 
+      DelayTimerOn {InstructionName := 'TON_TIME'; LibVersion := '1.0'; S7_SetPoint := 'False'} : TON_TIME;
+      DelayTimerOff {InstructionName := 'TOF_TIME'; LibVersion := '1.0'} : TOF_TIME;
+   END_VAR
+
+   VAR_TEMP 
+      DI_INV : Bool;
+      DI_TMP : Bool;
+   END_VAR
+
+
+BEGIN
+	
+	
+	//Invert input
+	#DI_INV := #DI.PAR.InvertInput XOR #DI_Input;
+	
+	//Sim
+	#DI_TMP := (#DI_INV AND NOT #DI.CTL.SimOff) OR #DI.CTL.SimOn;
+	
+	//Delay On
+	#DelayTimerOn(IN := #DI_TMP,
+	              PT := #DI.PAR.TimedelayOn * 100);
+	
+	//Delay off
+	#DelayTimerOff(IN := #DelayTimerOn.Q,
+	               PT := #DI.PAR.TimedelayOff * 100);
+	
+	//Status Input
+	#DI.STS.Input := #DI_Input;
+	
+	//Output
+	#DI.STS.Output := #DelayTimerOff.Q;
+END_FUNCTION_BLOCK
