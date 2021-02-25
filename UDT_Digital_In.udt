@@ -1,0 +1,21 @@
+﻿TYPE "UDT_Digital_In"
+VERSION : 0.1
+   STRUCT
+      Tagname : String[5] := 'AVxxx';
+      CTL : Struct
+         SimOn : Bool;
+         SimOff : Bool;
+      END_STRUCT;
+      STS : Struct
+         Input : Bool;
+         Output : Bool;
+      END_STRUCT;
+      PAR : Struct
+         InvertInput : Bool;
+         TimedelayOn : Time;
+         TimedelayOff : Time;
+      END_STRUCT;
+   END_STRUCT;
+
+END_TYPE
+
